@@ -7,27 +7,35 @@ class Loc {
 	address:string;
 	thumb:string;
 	type:string;
+	dateOfcreating:any;
+	fav:boolean;
 	constructor(name,zip,city,address,thumb) {
 		this.name = name;
 		this.zipCode = zip;
 		this.city = city;
 		this.address = address;
 		this.thumb = thumb;
-		this.type = "Locations";
+		this.type = "Locations";		
+		this.dateOfcreating = new Date();
+		this.fav = false;
 		locations.push(this);
 	}
-
+	sayDate(){return this.dateOfcreating.toDateString();}
 	display(){
-		return `<div class="col-md-6 col-lg-3 p-3">
-					<div class="card">
-						<div class="card-body bg-light" style="height:200px">
-		    				<h4 class="card-title">${this.name}</h4>
-		    				<p class="card-text">${this.address}, ${this.zipCode} ${this.city}</p>		    				
-		    			</div>
-		    			<button type="button" class="btn btn-danger">favourite</button>
-		    			<img class="card-img-bottom img-fluid" src="${this.thumb}" alt="Thumbnail">
-	    			</div>
+		return `<div class="card">						
+					<div class="card-body bg-light">
+		    			<h4 class="card-title">${this.name}</h4>
+		    			<p class="card-text">${this.address},<br>
+		    				${this.zipCode} ${this.city}<br>
+		    				<span class="small text-secondary">Created: ${this.sayDate()}</span>
+		    			</p>
+		    		</div>
+		    		<img class="card-img-bottom img-fluid d-none d-sm-block" src="${this.thumb}" alt="Thumbnail">
+		    		<button id="${this.thumb}" type="button" class="btn btn-danger w-50 mx-auto">favourite</button>
     			</div>`;
+	}
+	setFavourite(){
+		if (!this.fav) {this.fav = true;} else {this.fav = false;}
 	}
 }
 class Restaurant extends Loc {
@@ -42,17 +50,18 @@ class Restaurant extends Loc {
 		this.type = "Food";
 	}
 	display(){
-		return `<div class="col-md-6 col-lg-3 p-3">
-					<div class="card">
-						<div class="card-body bg-light" style="height:300px">
-		    				<h4 class="card-title">${this.name}</h4>
-		    				<p class="card-text">${this.address}, ${this.zipCode} ${this.city}, ${this.telNumber}<br>
+		return `<div class="card  bg-light">
+					<div class="card-body">
+		    			<h4 class="card-title">${this.name}</h4>
+		    			<p class="card-text">${this.address},<br>
+		    				${this.zipCode} ${this.city}, ${this.telNumber}<br>
 		    				${this.foodType} food<br>
-		    				<a href="${this.webPage}">${this.webPage}</a></p>
-		    			</div>
-		    			<button type="button" class="btn btn-danger">favourite</button>
-		    			<img class="card-img-bottom img-fluid" src="${this.thumb}" alt="Thumbnail">
-	    			</div>
+		    				<a href="${this.webPage}">${this.webPage}</a><br>
+		    				<span class="small text-secondary">Created: ${this.sayDate()}</span>
+		    			</p>
+		    		</div>
+		    		<img class="card-img-bottom img-fluid d-none d-sm-block" src="${this.thumb}" alt="Thumbnail">
+		    		<button id="${this.thumb}" type="button" class="btn btn-danger w-50 mx-auto">favourite</button>
     			</div>`;
 	}
 }
@@ -68,19 +77,19 @@ class EventLoc extends Loc {
 		this.type = "Events";
 	}
 	display(){
-		return `<div class="col-md-6 col-lg-3 p-3">
-					<div class="card">
-						<div class="card-body bg-light" style="height:300px">
-		    				<h4 class="card-title">${this.name}</h4>
-		    				<p class="card-text">${this.eventDate}<br>
-		    				${this.eventTime}<br>
-		    				&euro; ${this.price}<br>
-		    				${this.address}, ${this.zipCode} ${this.city}</p>
-		    			</div>
-		    			<button type="button" class="btn btn-danger">favourite</button>
-		    			<img class="card-img-bottom img-fluid" src="${this.thumb}" alt="Thumbnail">
-	    			</div>
-    			</div>`;
+		return `<div class="card">
+					<div class="card-body bg-light">
+		    			<h4 class="card-title">${this.name}</h4>
+		    			<p class="card-text">${this.eventDate}<br>
+		    			${this.eventTime}<br>
+		    			&euro; ${this.price}<br>
+		    			${this.address},<br>
+		    			${this.zipCode} ${this.city}<br>
+		    			<span class="small text-secondary">Created: ${this.sayDate()}</span></p>
+		    		</div>
+		    		<img class="card-img-bottom img-fluid d-none d-sm-block" src="${this.thumb}" alt="Thumbnail">
+		    		<button id="${this.thumb}" type="button" class="btn btn-danger w-50 mx-auto">favourite</button>
+	    		</div>`;
 	}
 }
 //add objects of class Location
@@ -100,33 +109,96 @@ let locEv2 = new EventLoc ("Guns ‘n Roses","1020","Vienna","Ernst-Happel Stadi
 //create a list of Objects in array on Html page
 function showLocations(arr,type){
 	let list = document.createElement("DIV");
-	list.className = `row mt-4`;
+	list.className = `row mt-4 p-3`;
 	list.innerHTML = `<h3 class="w-100 text-dark">${type}</h3>`;
 	document.getElementById("main").appendChild(list);
-	for (var i = 0; i < arr.length; i++) {
-		if (arr[i].type == type) {
-			list.innerHTML += arr[i].display();
-		}		
-	}
-}
-
-//show objects
-document.getElementById("main").innerHTML = "";
-showLocations(locations,"Locations");
-showLocations(locations,"Food");
-showLocations(locations,"Events");
-
-//change style of cards, depend of window size
-/*function WinWidth() {
-	var w = window.innerWidth;
-	console.log(w);
-	if (w<=576) {
-		var pics = document.getElementsByClassName("card-img-bottom img-fluid");
-		for (var i = 0; i < pics.length; i++) {
-			pics[i].style.display = "none";
+	if (type == "") {
+		for (var i = 0; i < arr.length; i++) {
+			list.innerHTML += `<div class="col-md-6 col-lg-3 p-3">${arr[i].display()}</div>`;
+		}
+	} else {
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i].type == type) {
+				list.innerHTML += `<div class="col-md-6 col-lg-3 p-3">${arr[i].display()}</div>`;
+				//favourite
+				document.getElementById(arr[i].thumb).addEventListener("click",function(){
+					arr[i].setFavourite();
+				});
+			}
 		}
 	}
 }
-var int = setInterval(WinWidth, 1000);
-if (window.innerWidth <= 576)
-clearInterval(int);*/
+//create a list of favourite locations
+function showFavourite(arr){
+	let list = document.createElement("DIV");
+	list.className = `row mt-4 p-3`;
+	list.innerHTML = `<h3 class="w-100 text-dark">Favourite</h3>`;
+	document.getElementById("main").appendChild(list);
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i].fav) {
+			list.innerHTML += `<div class="col-md-6 col-lg-3 p-3">${arr[i].display()}</div>`;
+		}		
+	}
+
+}
+//create random objects
+function showRandom(arr){
+	document.getElementById("main").innerHTML = "";
+	console.log(arr.length);
+	let r = Math.floor(Math.random()*arr.length);
+	console.log(r);
+	let list = document.createElement("DIV");
+	list.className = `row mt-4 p-3`;
+	list.innerHTML = `<h2 class="w-100 text-dark text-center">What to visit?<br>
+					<span class="small text-danger">Advice for today</span></h2>
+					<div class="col-6 p-3 mx-auto">${arr[r].display()}</div>`;;
+	document.getElementById("main").appendChild(list);	
+}
+
+showRandom(locations);
+
+//navigation menu
+//-----  home button
+document.getElementById("home").addEventListener('click',function(){showRandom(locations)});
+//-----  all Locations
+document.getElementById("all-locs").addEventListener('click',function(){
+	document.getElementById("main").innerHTML = "";
+	showLocations(locations,"Locations");
+	showLocations(locations,"Food");
+	showLocations(locations,"Events");
+});
+
+//-----  Restaurants
+document.getElementById("rest").addEventListener('click',function(){
+	document.getElementById("main").innerHTML = "";
+	showLocations(locations,"Food");
+});
+
+//-----  Events
+document.getElementById("event").addEventListener('click',function(){
+	document.getElementById("main").innerHTML = "";
+	showLocations(locations,"Events");
+});
+
+//-----  Favourite
+document.getElementById("fav").addEventListener('click',function(){
+	document.getElementById("main").innerHTML = "";
+	showFavourite(locations);
+});
+
+//sorting
+document.getElementById("props").addEventListener('click',function(){
+	switch ((<HTMLSelectElement>document.getElementById("props")).value) {
+		case "by-dateMax":
+			locations.sort(function(a, b){return b.dateOfcreating - a.dateOfcreating});
+			showLocations(locations,"");
+			break;
+		case "by-dateMin":
+			locations.sort(function(a, b){return a.dateOfcreating - b.dateOfcreating});
+			showLocations(locations,"");
+			break;
+		case "by-city":
+			showLocations(locations,"");
+			break;
+	}
+});

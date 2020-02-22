@@ -21,10 +21,21 @@ var Loc = /** @class */ (function () {
         this.address = address;
         this.thumb = thumb;
         this.type = "Locations";
+        this.dateOfcreating = new Date();
+        this.fav = false;
         locations.push(this);
     }
+    Loc.prototype.sayDate = function () { return this.dateOfcreating.toDateString(); };
     Loc.prototype.display = function () {
-        return "<div class=\"col-md-6 col-lg-3 p-3\">\n\t\t\t\t\t<div class=\"card\">\n\t\t\t\t\t\t<div class=\"card-body bg-light\" style=\"height:200px\">\n\t\t    \t\t\t\t<h4 class=\"card-title\">" + this.name + "</h4>\n\t\t    \t\t\t\t<p class=\"card-text\">" + this.address + ", " + this.zipCode + " " + this.city + "</p>\t\t    \t\t\t\t\n\t\t    \t\t\t</div>\n\t\t    \t\t\t<button type=\"button\" class=\"btn btn-danger\">favourite</button>\n\t\t    \t\t\t<img class=\"card-img-bottom img-fluid\" src=\"" + this.thumb + "\" alt=\"Thumbnail\">\n\t    \t\t\t</div>\n    \t\t\t</div>";
+        return "<div class=\"card\">\t\t\t\t\t\t\n\t\t\t\t\t<div class=\"card-body bg-light\">\n\t\t    \t\t\t<h4 class=\"card-title\">" + this.name + "</h4>\n\t\t    \t\t\t<p class=\"card-text\">" + this.address + ",<br>\n\t\t    \t\t\t\t" + this.zipCode + " " + this.city + "<br>\n\t\t    \t\t\t\t<span class=\"small text-secondary\">Created: " + this.sayDate() + "</span>\n\t\t    \t\t\t</p>\n\t\t    \t\t</div>\n\t\t    \t\t<img class=\"card-img-bottom img-fluid d-none d-sm-block\" src=\"" + this.thumb + "\" alt=\"Thumbnail\">\n\t\t    \t\t<button id=\"" + this.thumb + "\" type=\"button\" class=\"btn btn-danger w-50 mx-auto\">favourite</button>\n    \t\t\t</div>";
+    };
+    Loc.prototype.setFavourite = function () {
+        if (!this.fav) {
+            this.fav = true;
+        }
+        else {
+            this.fav = false;
+        }
     };
     return Loc;
 }());
@@ -39,7 +50,7 @@ var Restaurant = /** @class */ (function (_super) {
         return _this;
     }
     Restaurant.prototype.display = function () {
-        return "<div class=\"col-md-6 col-lg-3 p-3\">\n\t\t\t\t\t<div class=\"card\">\n\t\t\t\t\t\t<div class=\"card-body bg-light\" style=\"height:300px\">\n\t\t    \t\t\t\t<h4 class=\"card-title\">" + this.name + "</h4>\n\t\t    \t\t\t\t<p class=\"card-text\">" + this.address + ", " + this.zipCode + " " + this.city + ", " + this.telNumber + "<br>\n\t\t    \t\t\t\t" + this.foodType + " food<br>\n\t\t    \t\t\t\t<a href=\"" + this.webPage + "\">" + this.webPage + "</a></p>\n\t\t    \t\t\t</div>\n\t\t    \t\t\t<button type=\"button\" class=\"btn btn-danger\">favourite</button>\n\t\t    \t\t\t<img class=\"card-img-bottom img-fluid\" src=\"" + this.thumb + "\" alt=\"Thumbnail\">\n\t    \t\t\t</div>\n    \t\t\t</div>";
+        return "<div class=\"card  bg-light\">\n\t\t\t\t\t<div class=\"card-body\">\n\t\t    \t\t\t<h4 class=\"card-title\">" + this.name + "</h4>\n\t\t    \t\t\t<p class=\"card-text\">" + this.address + ",<br>\n\t\t    \t\t\t\t" + this.zipCode + " " + this.city + ", " + this.telNumber + "<br>\n\t\t    \t\t\t\t" + this.foodType + " food<br>\n\t\t    \t\t\t\t<a href=\"" + this.webPage + "\">" + this.webPage + "</a><br>\n\t\t    \t\t\t\t<span class=\"small text-secondary\">Created: " + this.sayDate() + "</span>\n\t\t    \t\t\t</p>\n\t\t    \t\t</div>\n\t\t    \t\t<img class=\"card-img-bottom img-fluid d-none d-sm-block\" src=\"" + this.thumb + "\" alt=\"Thumbnail\">\n\t\t    \t\t<button id=\"" + this.thumb + "\" type=\"button\" class=\"btn btn-danger w-50 mx-auto\">favourite</button>\n    \t\t\t</div>";
     };
     return Restaurant;
 }(Loc));
@@ -54,7 +65,7 @@ var EventLoc = /** @class */ (function (_super) {
         return _this;
     }
     EventLoc.prototype.display = function () {
-        return "<div class=\"col-md-6 col-lg-3 p-3\">\n\t\t\t\t\t<div class=\"card\">\n\t\t\t\t\t\t<div class=\"card-body bg-light\" style=\"height:300px\">\n\t\t    \t\t\t\t<h4 class=\"card-title\">" + this.name + "</h4>\n\t\t    \t\t\t\t<p class=\"card-text\">" + this.eventDate + "<br>\n\t\t    \t\t\t\t" + this.eventTime + "<br>\n\t\t    \t\t\t\t&euro; " + this.price + "<br>\n\t\t    \t\t\t\t" + this.address + ", " + this.zipCode + " " + this.city + "</p>\n\t\t    \t\t\t</div>\n\t\t    \t\t\t<button type=\"button\" class=\"btn btn-danger\">favourite</button>\n\t\t    \t\t\t<img class=\"card-img-bottom img-fluid\" src=\"" + this.thumb + "\" alt=\"Thumbnail\">\n\t    \t\t\t</div>\n    \t\t\t</div>";
+        return "<div class=\"card\">\n\t\t\t\t\t<div class=\"card-body bg-light\">\n\t\t    \t\t\t<h4 class=\"card-title\">" + this.name + "</h4>\n\t\t    \t\t\t<p class=\"card-text\">" + this.eventDate + "<br>\n\t\t    \t\t\t" + this.eventTime + "<br>\n\t\t    \t\t\t&euro; " + this.price + "<br>\n\t\t    \t\t\t" + this.address + ",<br>\n\t\t    \t\t\t" + this.zipCode + " " + this.city + "<br>\n\t\t    \t\t\t<span class=\"small text-secondary\">Created: " + this.sayDate() + "</span></p>\n\t\t    \t\t</div>\n\t\t    \t\t<img class=\"card-img-bottom img-fluid d-none d-sm-block\" src=\"" + this.thumb + "\" alt=\"Thumbnail\">\n\t\t    \t\t<button id=\"" + this.thumb + "\" type=\"button\" class=\"btn btn-danger w-50 mx-auto\">favourite</button>\n\t    \t\t</div>";
     };
     return EventLoc;
 }(Loc));
@@ -73,31 +84,89 @@ var locEv2 = new EventLoc("Guns ‘n Roses", "1020", "Vienna", "Ernst-Happel Sta
 //create a list of Objects in array on Html page
 function showLocations(arr, type) {
     var list = document.createElement("DIV");
-    list.className = "row mt-4";
+    list.className = "row mt-4 p-3";
     list.innerHTML = "<h3 class=\"w-100 text-dark\">" + type + "</h3>";
     document.getElementById("main").appendChild(list);
+    if (type == "") {
+        for (var i = 0; i < arr.length; i++) {
+            list.innerHTML += "<div class=\"col-md-6 col-lg-3 p-3\">" + arr[i].display() + "</div>";
+        }
+    }
+    else {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].type == type) {
+                list.innerHTML += "<div class=\"col-md-6 col-lg-3 p-3\">" + arr[i].display() + "</div>";
+                //favourite
+                document.getElementById(arr[i].thumb).addEventListener("click", function () {
+                    arr[i].setFavourite();
+                });
+            }
+        }
+    }
+}
+//create a list of favourite locations
+function showFavourite(arr) {
+    var list = document.createElement("DIV");
+    list.className = "row mt-4 p-3";
+    list.innerHTML = "<h3 class=\"w-100 text-dark\">Favourite</h3>";
+    document.getElementById("main").appendChild(list);
     for (var i = 0; i < arr.length; i++) {
-        if (arr[i].type == type) {
-            list.innerHTML += arr[i].display();
+        if (arr[i].fav) {
+            list.innerHTML += "<div class=\"col-md-6 col-lg-3 p-3\">" + arr[i].display() + "</div>";
         }
     }
 }
-//show objects
-document.getElementById("main").innerHTML = "";
-showLocations(locations, "Locations");
-showLocations(locations, "Food");
-showLocations(locations, "Events");
-//change style of cards, depend of window size
-/*function WinWidth() {
-    var w = window.innerWidth;
-    console.log(w);
-    if (w<=576) {
-        var pics = document.getElementsByClassName("card-img-bottom img-fluid");
-        for (var i = 0; i < pics.length; i++) {
-            pics[i].style.display = "none";
-        }
-    }
+//create random objects
+function showRandom(arr) {
+    document.getElementById("main").innerHTML = "";
+    console.log(arr.length);
+    var r = Math.floor(Math.random() * arr.length);
+    console.log(r);
+    var list = document.createElement("DIV");
+    list.className = "row mt-4 p-3";
+    list.innerHTML = "<h2 class=\"w-100 text-dark text-center\">What to visit?<br>\n\t\t\t\t\t<span class=\"small text-danger\">Advice for today</span></h2>\n\t\t\t\t\t<div class=\"col-6 p-3 mx-auto\">" + arr[r].display() + "</div>";
+    ;
+    document.getElementById("main").appendChild(list);
 }
-var int = setInterval(WinWidth, 1000);
-if (window.innerWidth <= 576)
-clearInterval(int);*/ 
+showRandom(locations);
+//navigation menu
+//-----  home button
+document.getElementById("home").addEventListener('click', function () { showRandom(locations); });
+//-----  all Locations
+document.getElementById("all-locs").addEventListener('click', function () {
+    document.getElementById("main").innerHTML = "";
+    showLocations(locations, "Locations");
+    showLocations(locations, "Food");
+    showLocations(locations, "Events");
+});
+//-----  Restaurants
+document.getElementById("rest").addEventListener('click', function () {
+    document.getElementById("main").innerHTML = "";
+    showLocations(locations, "Food");
+});
+//-----  Events
+document.getElementById("event").addEventListener('click', function () {
+    document.getElementById("main").innerHTML = "";
+    showLocations(locations, "Events");
+});
+//-----  Favourite
+document.getElementById("fav").addEventListener('click', function () {
+    document.getElementById("main").innerHTML = "";
+    showFavourite(locations);
+});
+//sorting
+document.getElementById("props").addEventListener('click', function () {
+    switch (document.getElementById("props").value) {
+        case "by-dateMax":
+            locations.sort(function (a, b) { return b.dateOfcreating - a.dateOfcreating; });
+            showLocations(locations, "");
+            break;
+        case "by-dateMin":
+            locations.sort(function (a, b) { return a.dateOfcreating - b.dateOfcreating; });
+            showLocations(locations, "");
+            break;
+        case "by-city":
+            showLocations(locations, "");
+            break;
+    }
+});

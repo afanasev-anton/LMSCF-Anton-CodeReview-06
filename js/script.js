@@ -25,7 +25,7 @@ var Loc = /** @class */ (function () {
         this.fav = false;
         locations.push(this);
     }
-    Loc.prototype.sayDate = function () { return this.dateOfcreating.toDateString(); };
+    Loc.prototype.sayDate = function () { return this.dateOfcreating.toUTCString(); };
     Loc.prototype.display = function () {
         return "<div class=\"card\">\t\t\t\t\t\t\n\t\t\t\t\t<div class=\"card-body bg-light\">\n\t\t    \t\t\t<h4 class=\"card-title\">" + this.name + "</h4>\n\t\t    \t\t\t<p class=\"card-text\">" + this.address + ",<br>\n\t\t    \t\t\t\t" + this.zipCode + " " + this.city + "<br>\n\t\t    \t\t\t\t<span class=\"small text-secondary\">Created: " + this.sayDate() + "</span>\n\t\t    \t\t\t</p>\n\t\t    \t\t</div>\n\t\t    \t\t<img class=\"card-img-bottom img-fluid d-none d-sm-block\" src=\"" + this.thumb + "\" alt=\"Thumbnail\">\n\t\t    \t\t<button id=\"" + this.thumb + "\" type=\"button\" class=\"btn btn-danger w-50 mx-auto\">favourite</button>\n    \t\t\t</div>";
     };
@@ -69,6 +69,16 @@ var EventLoc = /** @class */ (function (_super) {
     };
     return EventLoc;
 }(Loc));
+var City = /** @class */ (function () {
+    function City(name) {
+        this.name = name;
+        this.thumb = "img/town.jpg";
+    }
+    City.prototype.display = function () {
+        return "<div class=\"card\">\n\t\t\t\t\t<div class=\"card-img-overlay text-white\">\n\t\t    \t\t\t<h4 class=\"card-title bg-secondary\">" + this.name + "</h4>\n\t\t    \t\t</div>\n\t\t    \t\t<img class=\"card-img-bottom img-fluid d-none d-sm-block\" src=\"" + this.thumb + "\" alt=\"Thumbnail\">\n    \t\t\t</div>";
+    };
+    return City;
+}());
 //add objects of class Location
 var loc1 = new Loc("Schönbrunn Park", "1130", "Vienna", "Maxingstraße 13b", "img/schonn.jpg");
 var loc2 = new Loc("Schloss Belvedere", "1030", "Vienna", "Prinz Eugen-Straße 27", "img/belv.jpg");
@@ -80,7 +90,7 @@ var locRest2 = new Restaurant("Steak House", "1010", "Vienna", "Fleischerhofgass
 var locRest3 = new Restaurant("Lenin", "1015", "Amsterdam", "Herengracht 57", "img/burgers.jpg", "+31(20)45352515", "Fast", "lenin-loves-burgers.com");
 //add objects of class Event
 var locEv1 = new EventLoc("Cats- the musical", "1010", "Vienna", "Ronacher-Seilerstätte 9", "img/cats.jpg", "Fr., 15.12.2020.", "20:00", 120);
-var locEv2 = new EventLoc("Guns ‘n Roses", "1020", "Vienna", "Ernst-Happel Stadion, Meiereistraße 7", "img/gunsnroses.jpg", "Sat, 09.06.2020.", "19:30", 95.50);
+var locEv2 = new EventLoc("Guns ‘n Roses", "1020", "Vienna", "Meiereistraße 7", "img/gunsnroses.jpg", "Sat, 09.06.2020.", "19:30", 95.50);
 //create a list of Objects in array on Html page
 function showLocations(arr, type) {
     var list = document.createElement("DIV");
@@ -96,13 +106,23 @@ function showLocations(arr, type) {
         for (var i = 0; i < arr.length; i++) {
             if (arr[i].type == type) {
                 list.innerHTML += "<div class=\"col-md-6 col-lg-3 p-3\">" + arr[i].display() + "</div>";
-                //favourite
-                document.getElementById(arr[i].thumb).addEventListener("click", function () {
-                    arr[i].setFavourite();
-                });
             }
         }
     }
+    //favourite
+    var favB = document.getElementsByClassName("btn btn-danger w-50 mx-auto");
+    var _loop_1 = function (i_1) {
+        document.getElementById(arr[i_1].thumb).addEventListener("click", function () { changeFav(arr[i_1]); });
+    };
+    //console.log(favB);
+    for (var i_1 = 0; i_1 < favB.length; i_1++) {
+        _loop_1(i_1);
+    }
+}
+function changeFav(obj) {
+    obj.setFavourite();
+    console.log(obj);
+    console.log("hi");
 }
 //create a list of favourite locations
 function showFavourite(arr) {
@@ -155,18 +175,47 @@ document.getElementById("fav").addEventListener('click', function () {
     showFavourite(locations);
 });
 //sorting
-document.getElementById("props").addEventListener('click', function () {
+document.getElementById("sort").addEventListener('click', function () {
     switch (document.getElementById("props").value) {
         case "by-dateMax":
-            locations.sort(function (a, b) { return b.dateOfcreating - a.dateOfcreating; });
-            showLocations(locations, "");
+            var newArr = locations;
+            newArr.sort(function (a, b) { return b.dateOfcreating - a.dateOfcreating; });
+            document.getElementById("main").innerHTML = "";
+            showLocations(newArr, "");
             break;
         case "by-dateMin":
-            locations.sort(function (a, b) { return a.dateOfcreating - b.dateOfcreating; });
-            showLocations(locations, "");
+            var newArr = locations;
+            newArr.sort(function (a, b) { return a.dateOfcreating - b.dateOfcreating; });
+            document.getElementById("main").innerHTML = "";
+            showLocations(newArr, "");
             break;
         case "by-city":
-            showLocations(locations, "");
+            var newArr = [];
+            var cities = [];
+            var isCity = false;
+            for (var i = 0; i < locations.length; i++) {
+                for (var j = 0; j < cities.length; j++) {
+                    if (locations[i].city == cities[j]) {
+                        isCity = true;
+                    }
+                }
+                if (!isCity) {
+                    cities.push(locations[i].city);
+                }
+                else {
+                    isCity = false;
+                }
+            }
+            for (var i = 0; i < cities.length; i++) {
+                newArr.push(new City(cities[i]));
+                for (var j = 0; j < locations.length; j++) {
+                    if (locations[j].city == cities[i]) {
+                        newArr.push(locations[j]);
+                    }
+                }
+            }
+            document.getElementById("main").innerHTML = "";
+            showLocations(newArr, "");
             break;
     }
 });

@@ -20,7 +20,7 @@ class Loc {
 		this.fav = false;
 		locations.push(this);
 	}
-	sayDate(){return this.dateOfcreating.toDateString();}
+	sayDate(){return this.dateOfcreating.toUTCString();}
 	display(){
 		return `<div class="card">						
 					<div class="card-body bg-light">
@@ -92,6 +92,23 @@ class EventLoc extends Loc {
 	    		</div>`;
 	}
 }
+
+class City {
+	name:string;
+	thumb:string;
+	constructor(name) {
+		this.name = name;
+		this.thumb = "img/town.jpg";
+	}
+	display(){
+		return `<div class="card">
+					<div class="card-img-overlay text-white">
+		    			<h4 class="card-title bg-secondary">${this.name}</h4>
+		    		</div>
+		    		<img class="card-img-bottom img-fluid d-none d-sm-block" src="${this.thumb}" alt="Thumbnail">
+    			</div>`;
+	}
+}
 //add objects of class Location
 let loc1 = new Loc ("Schönbrunn Park","1130","Vienna","Maxingstraße 13b","img/schonn.jpg");
 let loc2 = new Loc ("Schloss Belvedere","1030","Vienna","Prinz Eugen-Straße 27","img/belv.jpg");
@@ -104,7 +121,7 @@ let locRest3 = new Restaurant ("Lenin","1015","Amsterdam","Herengracht 57","img/
 
 //add objects of class Event
 let locEv1 = new EventLoc ("Cats- the musical","1010","Vienna","Ronacher-Seilerstätte 9","img/cats.jpg","Fr., 15.12.2020.","20:00",120);
-let locEv2 = new EventLoc ("Guns ‘n Roses","1020","Vienna","Ernst-Happel Stadion, Meiereistraße 7","img/gunsnroses.jpg","Sat, 09.06.2020.","19:30",95.50);
+let locEv2 = new EventLoc ("Guns ‘n Roses","1020","Vienna","Meiereistraße 7","img/gunsnroses.jpg","Sat, 09.06.2020.","19:30",95.50);
 
 //create a list of Objects in array on Html page
 function showLocations(arr,type){
@@ -120,13 +137,21 @@ function showLocations(arr,type){
 		for (var i = 0; i < arr.length; i++) {
 			if (arr[i].type == type) {
 				list.innerHTML += `<div class="col-md-6 col-lg-3 p-3">${arr[i].display()}</div>`;
-				//favourite
-				document.getElementById(arr[i].thumb).addEventListener("click",function(){
-					arr[i].setFavourite();
-				});
 			}
 		}
 	}
+	//favourite
+	var favB = document.getElementsByClassName("btn btn-danger w-50 mx-auto");
+	//console.log(favB);
+	for (let i = 0; i < favB.length; i++) {
+		document.getElementById(arr[i].thumb).addEventListener("click",function(){changeFav(arr[i])});
+	}
+}
+
+function changeFav(obj){
+	obj.setFavourite();
+	console.log(obj);
+	console.log("hi");
 }
 //create a list of favourite locations
 function showFavourite(arr){
@@ -187,18 +212,44 @@ document.getElementById("fav").addEventListener('click',function(){
 });
 
 //sorting
-document.getElementById("props").addEventListener('click',function(){
+document.getElementById("sort").addEventListener('click',function(){
+	
 	switch ((<HTMLSelectElement>document.getElementById("props")).value) {
-		case "by-dateMax":
-			locations.sort(function(a, b){return b.dateOfcreating - a.dateOfcreating});
-			showLocations(locations,"");
+		case "by-dateMax":			
+			var newArr = locations;
+			newArr.sort(function(a, b){return b.dateOfcreating - a.dateOfcreating});			
+			document.getElementById("main").innerHTML = "";
+			showLocations(newArr,"");
 			break;
-		case "by-dateMin":
-			locations.sort(function(a, b){return a.dateOfcreating - b.dateOfcreating});
-			showLocations(locations,"");
+		case "by-dateMin":			
+			var newArr = locations;
+			newArr.sort(function(a, b){return a.dateOfcreating - b.dateOfcreating});
+			document.getElementById("main").innerHTML = "";
+			showLocations(newArr,"");
 			break;
 		case "by-city":
-			showLocations(locations,"");
+			var newArr:any = [];
+			var cities:Array<string> = [];
+			var isCity = false;
+			for (var i = 0; i < locations.length; i++) {
+				for (var j = 0; j < cities.length; j++) {
+					if (locations[i].city == cities[j]){
+						isCity = true;						
+					} 
+				}
+				if (!isCity) {cities.push(locations[i].city);}else {isCity = false;}
+			}
+
+			for (var i = 0; i < cities.length; i++) {
+				newArr.push(new City(cities[i]));
+				for (var j = 0; j < locations.length; j++) {
+					if (locations[j].city == cities[i]) {						
+						newArr.push(locations[j]);						
+					}
+				}
+			}
+			document.getElementById("main").innerHTML = "";
+			showLocations(newArr,"");
 			break;
 	}
 });
